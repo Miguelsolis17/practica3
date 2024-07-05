@@ -1,0 +1,812 @@
+Actividad:
+1.	Investigar y escribir una breve descripción sobre lo que es un RDBMS.
+Un Sistema de Gestión de Bases de Datos Relacionales (RDBMS, por sus siglas en inglés) es un software que permite la creación, 
+administración y manipulación de bases de datos relacionales. En un RDBMS, los datos se organizan en tablas, que están compuestas por filas y columnas.
+ Cada tabla representa una entidad del mundo real y cada fila en una tabla representa una instancia de esa entidad.
+
+Las características clave de un RDBMS incluyen:
+
+1. Modelo Relacional: Utiliza un modelo de datos basado en relaciones, lo que facilita la organización y acceso eficiente a los datos.
+   
+2. Lenguaje SQL: Proporciona un lenguaje estándar (SQL - Structured Query Language) para definir, manipular y consultar los datos.
+   
+3. Integridad de Datos: Implementa reglas para mantener la precisión y consistencia de los datos, como claves primarias y foráneas.
+   
+4. Transacciones: Soporta transacciones, permitiendo operaciones de múltiples pasos que son ejecutadas de manera atómica,
+ consistente, aislada y duradera (propiedades ACID).
+
+5. Control de Concurrencia: Maneja el acceso concurrente de múltiples usuarios, 
+asegurando que las operaciones concurrentes no comprometan la integridad de los datos.
+
+6. Seguridad: Proporciona mecanismos para la autenticación y autorización de usuarios, controlando el acceso a los datos.
+
+Ejemplos populares de RDBMS incluyen MySQL, PostgreSQL, Oracle Database, Microsoft SQL Server y SQLite. Estos sistemas son ampliamente utilizados en aplicaciones
+ empresariales, sistemas de gestión, sitios web y muchas otras áreas donde la gestión eficiente y segura de datos es crucial.
+2.	Crear una tabla simple en una base de datos SQLite (puede utilizarse un archivo local para evitar configuraciones complejas).
+
+Código Ejemplo con SQLite:
+```javascript
+const sqlite3 = require('sqlite3').verbose(); const db = new sqlite3.Database(':memory:');
+
+db.serialize(() => {
+db.run("CREATE TABLE user (id INT, name TEXT)");
+ 
+const stmt = db.prepare("INSERT INTO user VALUES (?, ?)"); stmt.run(1, "Alice");
+stmt.run(2, "Bob"); stmt.finalize();
+
+db.each("SELECT id, name FROM user", (err, row) => { console.log(`User ID: ${row.id}, Name: ${row.name}`);
+});
+});
+
+
+db.close();
+
+```
+import sqlite3
+
+# Conectar a la base de datos (o crearla si no existe)
+conexion = sqlite3.connect('mi_base_de_datos.db')
+
+# Crear un cursor
+cursor = conexion.cursor()
+
+# Crear una tabla simple
+cursor.execute('''
+    CREATE TABLE IF NOT EXISTS usuarios (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nombre TEXT NOT NULL,
+        edad INTEGER,
+        email TEXT
+    )
+''')
+
+# Guardar los cambios y cerrar la conexión
+conexion.commit()
+conexion.close()
+
+print("Tabla 'usuarios' creada exitosamente.")
+Actividad:
+1.	Investigar y escribir una breve descripción sobre lo que es una base de datos NoSQL y MongoDB.
+Una base de datos NoSQL es un tipo de sistema de gestión de bases de datos diseñado para almacenar, recuperar y gestionar datos que no están organizados en un esquema tabular como las bases de datos relacionales. En lugar de tablas con filas y columnas, las bases de datos NoSQL utilizan diferentes modelos de datos, como documentos, grafos, pares clave-valor y columnas anchas, para adaptarse a diferentes necesidades y tipos de datos.
+
+Las características clave de las bases de datos NoSQL incluyen:
+
+1. Flexibilidad de Esquema: Permiten esquemas dinámicos y flexibles, lo que facilita la evolución del modelo de datos sin interrupciones significativas.
+   
+2. Escalabilidad Horizontal: Diseñadas para escalar horizontalmente, es decir, agregar más servidores para manejar el aumento de carga y volumen de datos.
+   
+3. Alta Disponibilidad y Tolerancia a Fallos: Proporcionan mecanismos para distribuir datos y operaciones, asegurando que el sistema siga funcionando incluso en caso de fallos de hardware.
+
+4. Rendimiento: Optimizadas para consultas rápidas y eficientes, especialmente en grandes volúmenes de datos.
+
+5. Modelos de Datos Diversos: Soportan múltiples modelos de datos (documento, clave-valor, columna ancha, grafo), lo que permite elegir el mejor modelo para una aplicación específica.
+
+ MongoDB
+
+MongoDB es una de las bases de datos NoSQL más populares y ampliamente utilizadas. Es una base de datos orientada a documentos que almacena datos 
+en documentos BSON (una representación binaria de JSON). Esto permite una mayor flexibilidad y una estructura de datos más rica en comparación con las tablas 
+relacionales.
+
+Las características clave de MongoDB incluyen:
+
+1. Modelo de Datos Documental: Los datos se almacenan en documentos (similares a JSON), que pueden tener estructuras anidadas y tipos de datos complejos.
+
+2. Esquema Flexible: No requiere una estructura de esquema fija, lo que permite que los documentos en una colección tengan diferentes campos y estructuras.
+
+3. Escalabilidad Horizontal: Soporta particionamiento de datos (sharding) para distribuir datos en múltiples servidores, mejorando la escalabilidad y
+ la gestión de grandes volúmenes de datos.
+
+4. Consultas Poderosas: Proporciona un lenguaje de consulta rico que permite filtrar, proyectar, ordenar y agregar datos de manera eficiente.
+
+5. Alta Disponibilidad: Implementa réplicas (replica sets) para asegurar la disponibilidad y durabilidad de los datos en caso de fallos.
+
+6. Índices: Soporta la creación de índices en cualquier campo, mejorando el rendimiento de las consultas.
+
+MongoDB es especialmente adecuado para aplicaciones que requieren flexibilidad en el esquema de datos, alta disponibilidad y la capacidad de manejar grandes 
+volúmenes de datos de manera eficiente. Es utilizado en una variedad de aplicaciones, desde desarrollo web y móviles hasta análisis de datos y big data.
+Actividad:
+1.	Crear un esquema y un modelo para una colección de usuarios.
+Para crear un esquema y un modelo para una colección de usuarios en MongoDB, se puede utilizar una librería de modelado de datos como Mongoose en Node.js. Mongoose proporciona una manera sencilla de definir esquemas y modelos para MongoDB.
+
+A continuación, se presenta un ejemplo de cómo definir un esquema y un modelo para una colección de usuarios utilizando Mongoose:
+
+ Instalación de Mongoose
+
+Primero, asegúrate de tener Mongoose instalado en tu proyecto:
+
+```bash
+npm install mongoose
+```
+
+Definición del Esquema y Modelo
+
+Aquí hay un ejemplo de cómo definir un esquema y un modelo para una colección de usuarios:
+
+```javascript
+const mongoose = require('mongoose');
+
+// Definir el esquema del usuario
+const userSchema = new mongoose.Schema({
+  username: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  password: {
+    type: String,
+    required: true
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  firstName: {
+    type: String,
+    required: true
+  },
+  lastName: {
+    type: String,
+    required: true
+  },
+  dateOfBirth: {
+    type: Date
+  },
+  isActive: {
+    type: Boolean,
+    default: true
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now
+  }
+});
+
+// Crear un modelo basado en el esquema
+const User = mongoose.model('User', userSchema);
+
+module.exports = User;
+```
+
+ Explicación del Esquema
+
+1. **username**: Campo de tipo `String`, requerido y único para asegurar que cada usuario tenga un nombre de usuario único.
+2. **password**: Campo de tipo `String`, requerido para almacenar la contraseña del usuario.
+3. **email**: Campo de tipo `String`, requerido y único para asegurar que cada usuario tenga un correo electrónico único.
+4. **firstName**: Campo de tipo `String`, requerido para almacenar el nombre del usuario.
+5. **lastName**: Campo de tipo `String`, requerido para almacenar el apellido del usuario.
+6. **dateOfBirth**: Campo de tipo `Date` para almacenar la fecha de nacimiento del usuario.
+7. **isActive**: Campo de tipo `Boolean`, con un valor por defecto de `true`, para indicar si la cuenta del usuario está activa.
+8. **createdAt**: Campo de tipo `Date`, con un valor por defecto de la fecha actual, para almacenar la fecha de creación del usuario.
+9. **updatedAt**: Campo de tipo `Date`, con un valor por defecto de la fecha actual, para almacenar la fecha de la última actualización de la información del usuario.
+
+ Uso del Modelo
+
+Una vez definido el modelo, se puede utilizar para crear, leer, actualizar y eliminar usuarios en la base de datos MongoDB. Aquí hay algunos ejemplos básicos de uso:
+
+```javascript
+const mongoose = require('mongoose');
+const User = require('./path/to/userModel');
+
+// Conectar a la base de datos MongoDB
+mongoose.connect('mongodb://localhost:27017/mydatabase', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  useCreateIndex: true
+});
+
+// Crear un nuevo usuario
+const newUser = new User({
+  username: 'johndoe',
+  password: 'securepassword',
+  email: 'johndoe@example.com',
+  firstName: 'John',
+  lastName: 'Doe',
+  dateOfBirth: '1990-01-01'
+});
+
+newUser.save()
+  .then(user => {
+    console.log('User created:', user);
+  })
+  .catch(error => {
+    console.error('Error creating user:', error);
+  });
+```
+2.	Insertar, buscar, actualizar y eliminar documentos.
+
+
+Código Ejemplo:
+```javascript
+const userSchema = new mongoose.Schema({ name: String,
+age: Number,
+});
+
+
+const User = mongoose.model('User', userSchema);
+
+
+// Insertar un documento
+const user = new User({ name: 'Alice', age: 25 }); user.save((err) => {
+if (err) return console.error(err); console.log('User saved');
+});
+
+
+// Buscar documentos User.find((err, users) => {
+ 
+if (err) return console.error(err); console.log(users);
+});
+```
+Para trabajar con documentos en una colección de usuarios en MongoDB utilizando Mongoose, 
+se pueden realizar operaciones CRUD (Crear, Leer, Actualizar y Eliminar)
+ de la siguiente manera:
+
+### Configuración Inicial
+
+Primero, asegúrate de tener Mongoose y el modelo de usuario configurados como se mostró anteriormente. Conecta a la base de datos MongoDB:
+
+```javascript
+const mongoose = require('mongoose');
+const User = require('./path/to/userModel');
+
+// Conectar a la base de datos MongoDB
+mongoose.connect('mongodb://localhost:27017/mydatabase', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  useCreateIndex: true
+})
+.then(() => console.log('MongoDB connected...'))
+.catch(err => console.log(err));
+```
+
+### Insertar un Documento
+
+Para insertar un nuevo usuario:
+
+```javascript
+const newUser = new User({
+  username: 'johndoe',
+  password: 'securepassword',
+  email: 'johndoe@example.com',
+  firstName: 'John',
+  lastName: 'Doe',
+  dateOfBirth: '1990-01-01'
+});
+
+newUser.save()
+  .then(user => {
+    console.log('User created:', user);
+  })
+  .catch(error => {
+    console.error('Error creating user:', error);
+  });
+```
+
+### Buscar Documentos
+
+Para buscar un usuario por su nombre de usuario:
+
+```javascript
+User.findOne({ username: 'johndoe' })
+  .then(user => {
+    if (user) {
+      console.log('User found:', user);
+    } else {
+      console.log('User not found');
+    }
+  })
+  .catch(error => {
+    console.error('Error finding user:', error);
+  });
+```
+
+Para buscar todos los usuarios:
+
+```javascript
+User.find()
+  .then(users => {
+    console.log('Users:', users);
+  })
+  .catch(error => {
+    console.error('Error finding users:', error);
+  });
+```
+
+### Actualizar un Documento
+
+Para actualizar un usuario por su ID:
+
+```javascript
+User.findByIdAndUpdate(
+  'userIdHere', // Reemplaza con el ID del usuario
+  { email: 'newemail@example.com' }, // Datos a actualizar
+  { new: true } // Opciones, `new: true` devuelve el documento actualizado
+)
+  .then(user => {
+    if (user) {
+      console.log('User updated:', user);
+    } else {
+      console.log('User not found');
+    }
+  })
+  .catch(error => {
+    console.error('Error updating user:', error);
+  });
+```
+
+### Eliminar un Documento
+
+Para eliminar un usuario por su ID:
+
+```javascript
+User.findByIdAndDelete('userIdHere') // Reemplaza con el ID del usuario
+  .then(user => {
+    if (user) {
+      console.log('User deleted:', user);
+    } else {
+      console.log('User not found');
+    }
+  })
+  .catch(error => {
+    console.error('Error deleting user:', error);
+  });
+```
+
+1. CRUD: Create, Read, Update, Delete (operaciones básicas en bases de datos).
+
+
+Actividad:
+1.	Desarrollar una pequeña aplicación CRUD utilizando Express y MongoDB.
+Desarrollar una pequeña aplicación CRUD utilizando Express y MongoDB implica los siguientes pasos:
+
+1. **Instalar Dependencias**
+2. **Configurar el Servidor Express**
+3. **Definir el Modelo de Usuario con Mongoose**
+4. **Crear Rutas para Operaciones CRUD**
+5. **Iniciar el Servidor y Probar la Aplicación**
+
+### Paso 1: Instalar Dependencias
+
+Primero, crea un nuevo proyecto e instala las dependencias necesarias.
+
+```bash
+mkdir user-crud-app
+cd user-crud-app
+npm init -y
+npm install express mongoose body-parser
+```
+
+### Paso 2: Configurar el Servidor Express
+
+Crea un archivo `server.js` y configura el servidor Express.
+
+```javascript
+const express = require('express');
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+const app = express();
+const port = 3000;
+
+// Middleware
+app.use(bodyParser.json());
+
+// Conectar a MongoDB
+mongoose.connect('mongodb://localhost:27017/usercrud', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  useCreateIndex: true,
+  useFindAndModify: false
+})
+.then(() => console.log('MongoDB connected...'))
+.catch(err => console.log(err));
+
+// Importar rutas
+const userRoutes = require('./routes/users');
+app.use('/users', userRoutes);
+
+// Iniciar el servidor
+app.listen(port, () => {
+  console.log(`Server running on http://localhost:${port}`);
+});
+```
+
+### Paso 3: Definir el Modelo de Usuario con Mongoose
+
+Crea un archivo `models/User.js` para definir el modelo de usuario.
+
+```javascript
+const mongoose = require('mongoose');
+
+const userSchema = new mongoose.Schema({
+  username: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  password: {
+    type: String,
+    required: true
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  firstName: {
+    type: String,
+    required: true
+  },
+  lastName: {
+    type: String,
+    required: true
+  },
+  dateOfBirth: {
+    type: Date
+  },
+  isActive: {
+    type: Boolean,
+    default: true
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now
+  }
+});
+
+const User = mongoose.model('User', userSchema);
+
+module.exports = User;
+```
+
+### Paso 4: Crear Rutas para Operaciones CRUD
+
+Crea un archivo `routes/users.js` y define las rutas CRUD.
+
+```javascript
+const express = require('express');
+const router = express.Router();
+const User = require('../models/User');
+
+// Crear un nuevo usuario
+router.post('/', async (req, res) => {
+  const { username, password, email, firstName, lastName, dateOfBirth } = req.body;
+  try {
+    const newUser = new User({ username, password, email, firstName, lastName, dateOfBirth });
+    await newUser.save();
+    res.status(201).json(newUser);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+// Obtener todos los usuarios
+router.get('/', async (req, res) => {
+  try {
+    const users = await User.find();
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+// Obtener un usuario por ID
+router.get('/:id', async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ error: 'User not found' });
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+// Actualizar un usuario por ID
+router.put('/:id', async (req, res) => {
+  try {
+    const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    if (!updatedUser) return res.status(404).json({ error: 'User not found' });
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+// Eliminar un usuario por ID
+router.delete('/:id', async (req, res) => {
+  try {
+    const deletedUser = await User.findByIdAndDelete(req.params.id);
+    if (!deletedUser) return res.status(404).json({ error: 'User not found' });
+    res.status(200).json({ message: 'User deleted' });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+module.exports = router;
+```
+ Paso 5: Iniciar el Servidor y Probar la Aplicación
+
+Inicia el servidor ejecutando:
+
+```bash
+node server.js
+```
+
+La aplicación ahora debería estar ejecutándose en `http://localhost:3000`. Puedes probar las rutas CRUD utilizando herramientas como Postman o cURL.
+
+- **Crear Usuario (POST /users)**:
+  ```json
+  POST http://localhost:3000/users
+  {
+    "username": "johndoe",
+    "password": "securepassword",
+    "email": "johndoe@example.com",
+    "firstName": "John",
+    "lastName": "Doe",
+    "dateOfBirth": "1990-01-01"
+  }
+  ```
+
+- **Obtener Todos los Usuarios (GET /users)**:
+  ```http
+  GET http://localhost:3000/users
+  ```
+
+- **Obtener Usuario por ID (GET /users/:id)**:
+  ```http
+  GET http://localhost:3000/users/60d5f9b7d6e4ab001c8d4e3a
+  ```
+
+- **Actualizar Usuario (PUT /users/:id)**:
+  ```json
+  PUT http://localhost:3000/users/60d5f9b7d6e4ab001c8d4e3a
+  {
+    "email": "newemail@example.com"
+  }
+  ```
+
+- **Eliminar Usuario (DELETE /users/:id)**:
+  ```http
+  DELETE http://localhost:3000/users/60d5f9b7d6e4ab001c8d4e3a
+  ```
+
+
+2.	Crear rutas para cada operación CRUD.
+
+
+Código Ejemplo:
+```javascript
+const express = require('express'); const app = express(); app.use(express.json());
+
+app.post('/users', (req, res) => { const user = new User(req.body); user.save((err) => {
+if (err) return res.status(500).send(err); res.status(201).send(user);
+});
+});
+
+Para crear rutas para cada operación CRUD en una aplicación utilizando Express y MongoDB con Mongoose, sigue los siguientes pasos.
+ Esto ampliará el ejemplo anterior y detallará las rutas CRUD específicas para la colección de usuarios.
+
+### Paso 1: Estructura del Proyecto
+
+Asegúrate de tener la siguiente estructura de directorios:
+
+```
+user-crud-app/
+├── models/
+│   └── User.js
+├── routes/
+│   └── users.js
+└── server.js
+```
+
+### Paso 2: Definir el Modelo de Usuario (models/User.js)
+
+Este paso ya se ha cubierto anteriormente, pero aquí está el código para referencia:
+
+```javascript
+const mongoose = require('mongoose');
+
+const userSchema = new mongoose.Schema({
+  username: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  password: {
+    type: String,
+    required: true
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  firstName: {
+    type: String,
+    required: true
+  },
+  lastName: {
+    type: String,
+    required: true
+  },
+  dateOfBirth: {
+    type: Date
+  },
+  isActive: {
+    type: Boolean,
+    default: true
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now
+  }
+});
+
+const User = mongoose.model('User', userSchema);
+
+module.exports = User;
+```
+
+### Paso 3: Crear Rutas para Operaciones CRUD (routes/users.js)
+
+Crea el archivo `routes/users.js` con las rutas para cada operación CRUD.
+
+```javascript
+const express = require('express');
+const router = express.Router();
+const User = require('../models/User');
+
+// Crear un nuevo usuario
+router.post('/', async (req, res) => {
+  const { username, password, email, firstName, lastName, dateOfBirth } = req.body;
+  try {
+    const newUser = new User({ username, password, email, firstName, lastName, dateOfBirth });
+    await newUser.save();
+    res.status(201).json(newUser);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+// Obtener todos los usuarios
+router.get('/', async (req, res) => {
+  try {
+    const users = await User.find();
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+// Obtener un usuario por ID
+router.get('/:id', async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ error: 'User not found' });
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+// Actualizar un usuario por ID
+router.put('/:id', async (req, res) => {
+  try {
+    const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    if (!updatedUser) return res.status(404).json({ error: 'User not found' });
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+// Eliminar un usuario por ID
+router.delete('/:id', async (req, res) => {
+  try {
+    const deletedUser = await User.findByIdAndDelete(req.params.id);
+    if (!deletedUser) return res.status(404).json({ error: 'User not found' });
+    res.status(200).json({ message: 'User deleted' });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+module.exports = router;
+```
+
+### Paso 4: Configurar el Servidor Express (server.js)
+
+Configura el servidor para usar las rutas definidas.
+
+```javascript
+const express = require('express');
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+const app = express();
+const port = 3000;
+
+// Middleware
+app.use(bodyParser.json());
+
+// Conectar a MongoDB
+mongoose.connect('mongodb://localhost:27017/usercrud', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  useCreateIndex: true,
+  useFindAndModify: false
+})
+.then(() => console.log('MongoDB connected...'))
+.catch(err => console.log(err));
+
+// Importar rutas
+const userRoutes = require('./routes/users');
+app.use('/users', userRoutes);
+
+// Iniciar el servidor
+app.listen(port, () => {
+  console.log(`Server running on http://localhost:${port}`);
+});
+```
+
+### Paso 5: Probar la Aplicación
+
+Inicia el servidor ejecutando:
+
+```bash
+node server.js
+```
+
+### Probar las Rutas CRUD
+
+Puedes probar las rutas utilizando herramientas como Postman o cURL.
+
+- **Crear Usuario (POST /users)**:
+  ```json
+  POST http://localhost:3000/users
+  {
+    "username": "johndoe",
+    "password": "securepassword",
+    "email": "johndoe@example.com",
+    "firstName": "John",
+    "lastName": "Doe",
+    "dateOfBirth": "1990-01-01"
+  }
+  ```
+
+- **Obtener Todos los Usuarios (GET /users)**:
+  ```http
+  GET http://localhost:3000/users
+  ```
+
+- **Obtener Usuario por ID (GET /users/:id)**:
+  ```http
+  GET http://localhost:3000/users/60d5f9b7d6e4ab001c8d4e3a
+  ```
+
+- **Actualizar Usuario (PUT /users/:id)**:
+  ```json
+  PUT http://localhost:3000/users/60d5f9b7d6e4ab001c8d4e3a
+  {
+    "email": "newemail@example.com"
+  }
+  ```
+
+- **Eliminar Usuario (DELETE /users/:id)**:
+  ```http
+  DELETE http://localhost:3000/users/60d5f9b7d6e4ab001c8d4e3a
+
+
+
+
